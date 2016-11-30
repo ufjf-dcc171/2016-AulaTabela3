@@ -21,17 +21,11 @@ class PessoaTableModel extends AbstractTableModel {
 
    @Override
    public int getRowCount() {
-      try {
-         Statement operacao = conexao.createStatement();
-         ResultSet resultado = operacao.executeQuery("SELECT COUNT(Nome) FROM pessoa");
-         if (resultado.next()) {
-            return resultado.getInt(1);
-         } else {
-            return 0;
-         }
-      } catch (SQLException ex) {
-         Logger.getLogger(PessoaTableModel.class.getName()).log(Level.SEVERE, null, ex);
+      if (pessoas != null) {
+         return pessoas.size();
+      } else {
          return 0;
+
       }
    }
 
@@ -77,9 +71,11 @@ class PessoaTableModel extends AbstractTableModel {
             String nome = resultado.getString(1);
             String telefone = resultado.getString(2);
             pessoas.add(new Pessoa(nome, telefone));
+
          }
       } catch (SQLException ex) {
-         Logger.getLogger(PessoaTableModel.class.getName()).log(Level.SEVERE, null, ex);
+         Logger.getLogger(PessoaTableModel.class
+                 .getName()).log(Level.SEVERE, null, ex);
 
       }
    }
