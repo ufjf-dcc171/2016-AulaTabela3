@@ -24,6 +24,7 @@ class PessoaTableModel extends AbstractTableModel {
       if (pessoas != null) {
          return pessoas.size();
       } else {
+         atualizaDados();
          return 0;
 
       }

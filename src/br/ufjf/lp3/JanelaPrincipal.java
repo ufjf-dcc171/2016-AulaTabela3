@@ -87,21 +87,18 @@ public class JanelaPrincipal extends javax.swing.JFrame {
       layout.setHorizontalGroup(
          layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
          .addGroup(layout.createSequentialGroup()
-            .addContainerGap()
+            .addComponent(btnSalvar)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(jButton1)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+         .addComponent(txtNome)
+         .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-               .addComponent(txtNome)
-               .addComponent(txtTelefone, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
-               .addGroup(layout.createSequentialGroup()
-                  .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                     .addComponent(jLabel1)
-                     .addComponent(jLabel2)
-                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSalvar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
-                  .addGap(0, 0, Short.MAX_VALUE)))
-            .addContainerGap())
+               .addComponent(jLabel1)
+               .addComponent(jLabel2))
+            .addGap(0, 0, Short.MAX_VALUE))
+         .addComponent(txtTelefone, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
       );
       layout.setVerticalGroup(
          layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,8 +116,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                .addComponent(btnSalvar)
                .addComponent(jButton1))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
       );
 
       pack();
