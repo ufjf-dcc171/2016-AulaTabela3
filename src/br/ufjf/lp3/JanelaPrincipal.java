@@ -7,6 +7,7 @@ package br.ufjf.lp3;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -20,6 +21,8 @@ import javax.swing.JOptionPane;
 public class JanelaPrincipal extends javax.swing.JFrame {
 
    private Connection conexao;
+   private PreparedStatement opInsere;
+   private PreparedStatement opExclui;
 
    /**
     * Creates new form JanelaPrincipal
@@ -41,6 +44,13 @@ public class JanelaPrincipal extends javax.swing.JFrame {
          System.exit(2);
       }
 
+      try {
+         opInsere = conexao.prepareStatement("INSERT INTO pessoa(nome, telefone) VALUES (?, ?)");
+         opExclui = conexao.prepareStatement("DELETE FROM pessoa WHERE telefone=?");
+      } catch (SQLException ex) {
+         JOptionPane.showMessageDialog(this, "Não foi possível preparar as operações do banco de dados!", "Erro ao preparar!", JOptionPane.ERROR_MESSAGE);
+         Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+      }
       initComponents();
       setLocationRelativeTo(null);
    }
@@ -78,6 +88,11 @@ public class JanelaPrincipal extends javax.swing.JFrame {
       });
 
       jButton1.setText("Excluir");
+      jButton1.addActionListener(new java.awt.event.ActionListener() {
+         public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton1ActionPerformed(evt);
+         }
+      });
 
       tblPessoa.setModel(new PessoaTableModel(conexao));
       jScrollPane1.setViewportView(tblPessoa);
@@ -124,10 +139,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
       try {
-         Statement operacao = conexao.createStatement();
-         operacao.executeUpdate("INSERT INTO pessoa(nome, telefone) VALUES('"
-                 + txtNome.getText() + "','"
-                 + txtTelefone.getText() + "')");
+         opInsere.clearParameters();
+         opInsere.setString(1, txtNome.getText());
+         opInsere.setString(2, txtTelefone.getText());
+         opInsere.executeUpdate();
          txtNome.setText("");
          txtTelefone.setText("");
          tblPessoa.updateUI();
@@ -138,6 +153,22 @@ public class JanelaPrincipal extends javax.swing.JFrame {
       }
 
    }//GEN-LAST:event_btnSalvarActionPerformed
+
+   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      try {
+         if(tblPessoa.getSelectedRowCount()==0) return;
+         Integer linha = tblPessoa.getSelectedRow();
+         String telefone = (String) tblPessoa.getValueAt(linha, 1);
+         opExclui.clearParameters();
+         opExclui.setString(1, telefone);
+         opExclui.executeUpdate();
+         tblPessoa.clearSelection();
+         tblPessoa.updateUI();
+      } catch (SQLException ex) {
+         JOptionPane.showMessageDialog(this, "Não foi possível excluir o registro!", "Erro ao excluir!", JOptionPane.ERROR_MESSAGE);
+         Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }//GEN-LAST:event_jButton1ActionPerformed
 
    /**
     * @param args the command line arguments
