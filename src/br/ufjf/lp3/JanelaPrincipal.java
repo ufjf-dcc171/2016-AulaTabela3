@@ -23,6 +23,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
    private Connection conexao;
    private PreparedStatement opInsere;
    private PreparedStatement opExclui;
+   private PessoaTableModel pessoaModel;
 
    /**
     * Creates new form JanelaPrincipal
@@ -47,7 +48,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
       try {
          opInsere = conexao.prepareStatement("INSERT INTO pessoa(nome, telefone) VALUES (?, ?)");
          opExclui = conexao.prepareStatement("DELETE FROM pessoa WHERE telefone=?");
-      } catch (SQLException ex) {
+         pessoaModel = new PessoaTableModel(conexao);
+      } catch (Exception ex) {
          JOptionPane.showMessageDialog(this, "Não foi possível preparar as operações do banco de dados!", "Erro ao preparar!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -94,7 +96,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
          }
       });
 
-      tblPessoa.setModel(new PessoaTableModel(conexao));
+      tblPessoa.setModel(pessoaModel);
       jScrollPane1.setViewportView(tblPessoa);
 
       javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
