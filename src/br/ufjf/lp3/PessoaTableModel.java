@@ -1,30 +1,26 @@
 package br.ufjf.lp3;
 
-import java.util.List;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 class PessoaTableModel extends AbstractTableModel {
 
-   private final Connection conexao;
-   private ArrayList<Pessoa> pessoas;
+   private List<Pessoa> pessoas;
+   private final PessoaDAO dao;
 
-   public PessoaTableModel(Connection conexao) {
-      this.conexao = conexao;
+   public PessoaTableModel() throws Exception {
+      dao = new PessoaDAOJDBC();
    }
 
    @Override
    public int getRowCount() {
+      atualizaDados();
       if (pessoas != null) {
          return pessoas.size();
       } else {
-         atualizaDados();
          return 0;
 
       }
@@ -65,16 +61,8 @@ class PessoaTableModel extends AbstractTableModel {
    private void atualizaDados() {
       pessoas = new ArrayList<>();
       try {
-         Statement operacao = conexao.createStatement();
-         ResultSet resultado = operacao.executeQuery("SELECT nome,telefone FROM pessoa");
-         int l = 0;
-         while (resultado.next()) {
-            String nome = resultado.getString(1);
-            String telefone = resultado.getString(2);
-            pessoas.add(new Pessoa(nome, telefone));
-
-         }
-      } catch (SQLException ex) {
+         pessoas = dao.listaTodos();
+      } catch (Exception ex) {
          Logger.getLogger(PessoaTableModel.class
                  .getName()).log(Level.SEVERE, null, ex);
 

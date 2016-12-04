@@ -5,11 +5,6 @@
  */
 package br.ufjf.lp3;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -20,9 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class JanelaPrincipal extends javax.swing.JFrame {
 
-   private Connection conexao;
-   private PreparedStatement opInsere;
-   private PreparedStatement opExclui;
+   private PessoaDAO dao;
    private PessoaTableModel pessoaModel;
 
    /**
@@ -30,27 +23,21 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     */
    public JanelaPrincipal() {
       try {
-         Class.forName("org.apache.derby.jdbc.ClientDriver");
+         pessoaModel = new PessoaTableModel();
       } catch (ClassNotFoundException ex) {
          JOptionPane.showMessageDialog(this, "Driver não disponível", "Sem driver!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
          System.exit(1);
-      }
-
-      try {
-         conexao = DriverManager.getConnection("jdbc:derby://localhost:1527/2016-3-dcc", "usuario", "senha");
-      } catch (SQLException ex) {
+      } catch (Exception ex) {
          JOptionPane.showMessageDialog(this, "Não foi possível conectar ao banco de dados!", "Sem banco!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
          System.exit(2);
       }
 
       try {
-         opInsere = conexao.prepareStatement("INSERT INTO pessoa(nome, telefone) VALUES (?, ?)");
-         opExclui = conexao.prepareStatement("DELETE FROM pessoa WHERE telefone=?");
-         pessoaModel = new PessoaTableModel(conexao);
+         dao = new PessoaDAOJDBC();
       } catch (Exception ex) {
-         JOptionPane.showMessageDialog(this, "Não foi possível preparar as operações do banco de dados!", "Erro ao preparar!", JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(this, "Não foi possível criar o DAO!", "Erro no DAO!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
       }
       initComponents();
@@ -141,15 +128,15 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
       try {
-         opInsere.clearParameters();
-         opInsere.setString(1, txtNome.getText());
-         opInsere.setString(2, txtTelefone.getText());
-         opInsere.executeUpdate();
+         Pessoa novaPessoa = new Pessoa();
+         novaPessoa.setNome(txtNome.getText());
+         novaPessoa.setTelefone(txtTelefone.getText());
+         dao.insere(novaPessoa);
          txtNome.setText("");
          txtTelefone.setText("");
          tblPessoa.updateUI();
          txtNome.requestFocus();
-      } catch (SQLException ex) {
+      } catch (Exception ex) {
          JOptionPane.showMessageDialog(this, "Erro salvar os dados", "Erro na inserção!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -158,15 +145,17 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
       try {
-         if(tblPessoa.getSelectedRowCount()==0) return;
+         if (tblPessoa.getSelectedRowCount() == 0) {
+            return;
+         }
          Integer linha = tblPessoa.getSelectedRow();
+         String nome = (String) tblPessoa.getValueAt(linha, 0);
          String telefone = (String) tblPessoa.getValueAt(linha, 1);
-         opExclui.clearParameters();
-         opExclui.setString(1, telefone);
-         opExclui.executeUpdate();
+         Pessoa pessoaAExcluir = new Pessoa(nome, telefone);
+         dao.excluir(pessoaAExcluir);
          tblPessoa.clearSelection();
          tblPessoa.updateUI();
-      } catch (SQLException ex) {
+      } catch (Exception ex) {
          JOptionPane.showMessageDialog(this, "Não foi possível excluir o registro!", "Erro ao excluir!", JOptionPane.ERROR_MESSAGE);
          Logger.getLogger(JanelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
       }
